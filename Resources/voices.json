@@ -1,0 +1,410 @@
+[
+  {
+    "name": "Zoey",
+    "locale": "en-US"
+  },
+  {
+    "name": "Juniper",
+    "locale": "en-US"
+  },
+  {
+    "name": "Everly",
+    "locale": "en-US"
+  },
+  {
+    "name": "Harper",
+    "locale": "en-US"
+  },
+  {
+    "name": "Hadley",
+    "locale": "en-US"
+  },
+  {
+    "name": "Delia",
+    "locale": "en-US"
+  },
+  {
+    "name": "Easton",
+    "locale": "en-US"
+  },
+  {
+    "name": "Micah",
+    "locale": "en-US"
+  },
+  {
+    "name": "Trevor",
+    "locale": "en-US"
+  },
+  {
+    "name": "Russell",
+    "locale": "en-US"
+  },
+  {
+    "name": "Preston",
+    "locale": "en-US"
+  },
+  {
+    "name": "Miles",
+    "locale": "en-US"
+  },
+  {
+    "name": "Maeve",
+    "locale": "en-GB"
+  },
+  {
+    "name": "Freya",
+    "locale": "en-GB"
+  },
+  {
+    "name": "Pippa",
+    "locale": "en-GB"
+  },
+  {
+    "name": "Elodie-Rose",
+    "locale": "en-GB"
+  },
+  {
+    "name": "Imogen",
+    "locale": "en-GB"
+  },
+  {
+    "name": "Lottie",
+    "locale": "en-GB"
+  },
+  {
+    "name": "Alfie",
+    "locale": "en-GB"
+  },
+  {
+    "name": "Hugh",
+    "locale": "en-GB"
+  },
+  {
+    "name": "Edwin",
+    "locale": "en-GB"
+  },
+  {
+    "name": "Spencer",
+    "locale": "en-GB"
+  },
+  {
+    "name": "Toby",
+    "locale": "en-GB"
+  },
+  {
+    "name": "Teddy",
+    "locale": "en-GB"
+  },
+  {
+    "name": "Noa",
+    "locale": "es-ES"
+  },
+  {
+    "name": "Lucía-Sol",
+    "locale": "es-ES"
+  },
+  {
+    "name": "Candela",
+    "locale": "es-ES"
+  },
+  {
+    "name": "Celia",
+    "locale": "es-ES"
+  },
+  {
+    "name": "Alba",
+    "locale": "es-ES"
+  },
+  {
+    "name": "Alicia",
+    "locale": "es-ES"
+  },
+  {
+    "name": "Marcos",
+    "locale": "es-ES"
+  },
+  {
+    "name": "Borja",
+    "locale": "es-ES"
+  },
+  {
+    "name": "Iker",
+    "locale": "es-ES"
+  },
+  {
+    "name": "Nuno",
+    "locale": "es-ES"
+  },
+  {
+    "name": "Izan",
+    "locale": "es-ES"
+  },
+  {
+    "name": "Guillermo",
+    "locale": "es-ES"
+  },
+  {
+    "name": "Rebeca",
+    "locale": "es-MX"
+  },
+  {
+    "name": "Regina",
+    "locale": "es-MX"
+  },
+  {
+    "name": "Danae",
+    "locale": "es-MX"
+  },
+  {
+    "name": "Azucena",
+    "locale": "es-MX"
+  },
+  {
+    "name": "Jimena",
+    "locale": "es-MX"
+  },
+  {
+    "name": "Ximena",
+    "locale": "es-MX"
+  },
+  {
+    "name": "Lalo",
+    "locale": "es-MX"
+  },
+  {
+    "name": "Aldo",
+    "locale": "es-MX"
+  },
+  {
+    "name": "Yael",
+    "locale": "es-MX"
+  },
+  {
+    "name": "Ulises",
+    "locale": "es-MX"
+  },
+  {
+    "name": "Leonel",
+    "locale": "es-MX"
+  },
+  {
+    "name": "Nico",
+    "locale": "es-MX"
+  },
+  {
+    "name": "Nele",
+    "locale": "de-DE"
+  },
+  {
+    "name": "Jette",
+    "locale": "de-DE"
+  },
+  {
+    "name": "Annika",
+    "locale": "de-DE"
+  },
+  {
+    "name": "Jule",
+    "locale": "de-DE"
+  },
+  {
+    "name": "Lotta",
+    "locale": "de-DE"
+  },
+  {
+    "name": "Josefine",
+    "locale": "de-DE"
+  },
+  {
+    "name": "Anton",
+    "locale": "de-DE"
+  },
+  {
+    "name": "Mirko",
+    "locale": "de-DE"
+  },
+  {
+    "name": "Mats",
+    "locale": "de-DE"
+  },
+  {
+    "name": "Henrik",
+    "locale": "de-DE"
+  },
+  {
+    "name": "Leon",
+    "locale": "de-DE"
+  },
+  {
+    "name": "Mika",
+    "locale": "de-DE"
+  },
+  {
+    "name": "Noémie",
+    "locale": "fr-FR"
+  },
+  {
+    "name": "Coralie",
+    "locale": "fr-FR"
+  },
+  {
+    "name": "Tiphaine",
+    "locale": "fr-FR"
+  },
+  {
+    "name": "Maëlys",
+    "locale": "fr-FR"
+  },
+  {
+    "name": "Orianne",
+    "locale": "fr-FR"
+  },
+  {
+    "name": "Solène",
+    "locale": "fr-FR"
+  },
+  {
+    "name": "Augustin",
+    "locale": "fr-FR"
+  },
+  {
+    "name": "Arnaud",
+    "locale": "fr-FR"
+  },
+  {
+    "name": "Jules",
+    "locale": "fr-FR"
+  },
+  {
+    "name": "Baptiste",
+    "locale": "fr-FR"
+  },
+  {
+    "name": "Lucien",
+    "locale": "fr-FR"
+  },
+  {
+    "name": "Marius",
+    "locale": "fr-FR"
+  },
+  {
+    "name": "Manuela-Lu",
+    "locale": "pt-BR"
+  },
+  {
+    "name": "Isadora",
+    "locale": "pt-BR"
+  },
+  {
+    "name": "Débora",
+    "locale": "pt-BR"
+  },
+  {
+    "name": "Rafaela",
+    "locale": "pt-BR"
+  },
+  {
+    "name": "Clarice",
+    "locale": "pt-BR"
+  },
+  {
+    "name": "Flávia",
+    "locale": "pt-BR"
+  },
+  {
+    "name": "Davi",
+    "locale": "pt-BR"
+  },
+  {
+    "name": "Igor",
+    "locale": "pt-BR"
+  },
+  {
+    "name": "Kauã",
+    "locale": "pt-BR"
+  },
+  {
+    "name": "Vitor",
+    "locale": "pt-BR"
+  },
+  {
+    "name": "Otávio",
+    "locale": "pt-BR"
+  },
+  {
+    "name": "Marcelo",
+    "locale": "pt-BR"
+  },
+  {
+    "name": "Bryony",
+    "locale": "en-GB"
+  },
+  {
+    "name": "Ninon",
+    "locale": "fr-FR"
+  },
+  {
+    "name": "Nerea",
+    "locale": "es-ES"
+  },
+  {
+    "name": "Svea",
+    "locale": "de-DE"
+  },
+  {
+    "name": "Lilou",
+    "locale": "fr-FR"
+  },
+  {
+    "name": "Hélène",
+    "locale": "fr-FR"
+  },
+  {
+    "name": "Captain Silas Blackwater",
+    "locale": "characters"
+  },
+  {
+    "name": "Morwenna of the Deep",
+    "locale": "characters"
+  },
+  {
+    "name": "Old Mortlake",
+    "locale": "characters"
+  },
+  {
+    "name": "Azgorath",
+    "locale": "characters"
+  },
+  {
+    "name": "Fennick the Young Elf",
+    "locale": "characters"
+  },
+  {
+    "name": "The Thing Under the Stairs",
+    "locale": "characters"
+  },
+  {
+    "name": "Vyrmathrax the Ancient",
+    "locale": "characters"
+  },
+  {
+    "name": "Grub the Ogre",
+    "locale": "characters"
+  },
+  {
+    "name": "Master Aldric",
+    "locale": "characters"
+  },
+  {
+    "name": "The Snow Queen",
+    "locale": "characters"
+  },
+  {
+    "name": "Sir Bramwell",
+    "locale": "characters"
+  },
+  {
+    "name": "Fairy Godmother",
+    "locale": "characters"
+  }
+]

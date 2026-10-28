@@ -1,0 +1,48 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Phonon for Mac</title>
+<h1>Phonon for Mac 1.0.0</h1>
+<p>Speech is generated on your Mac without an Ollama server.</p>
+<h2>What's New</h2>
+<p>Version 1.0.0: native, offline VoiceOver speech in five languages with 102 voices;
+streaming rate, pitch and volume controls; voice preview and signed updates.</p>
+<h2>Getting Started</h2>
+<p>Open Phonon for Mac and wait for Ready. Choose a language and voice, then use
+Test Voice. Refresh Voices updates the system list; it may take a short time to appear.</p>
+<p>In VoiceOver Utility, add a Phonon voice to your speech voices and select it.
+Keep a familiar Apple voice available as an alternative. Closing this
+application does not disable the voices.</p>
+<p>The first system utterance can take several seconds while Core ML prepares
+the engine. Subsequent utterances stream without waiting for the whole text.</p>
+<h2>Speech Controls</h2>
+<p>VoiceOver supplies rate, pitch and volume. Phonon generates streaming audio;
+Sonic adjusts rate and pitch during generation. Navigating cancels obsolete speech.</p>
+<h2>Languages</h2><p>English, French, German, Spanish and Portuguese. Voices are
+grouped by their published locale. English character voices have their own group.</p>
+<h2>Updates</h2>
+<p>Check for updates offers Never, Hourly and Daily. Daily is the default. Checks
+run when this settings app opens and at the selected interval while it stays open;
+no login item or update helper runs after you quit. Check Now performs a manual check.</p>
+<p>Updates require a valid Phonon signature, matching download size and hash, the
+correct Apple developer signature and notarization. Installation closes and
+reopens this app, preserving its preferences and prepared model data. VoiceOver
+can continue speaking through its loaded voice; restart VoiceOver when convenient
+after an update. Do not interrupt installation.</p>
+<h2>Privacy</h2><p>Speech stays on this Mac. No spoken text or audio is saved by the app.
+The settings app contacts 3.onj.me to check for updates and download an update
+you approve. It sends no speech text. Automatic checks can be disabled.</p>
+<h2>Credits and Licensing</h2>
+<p>Application by Andre Louis. Native engine and voice catalogue by
+<a href="https://github.com/gradium-ai/xn-ptts">Gradium</a>, building on Kyutai's
+Pocket TTS and Mimi. Streaming rate and pitch processing uses
+<a href="https://github.com/waywardgeek/sonic">Sonic by Bill Cox</a>.</p>
+<p>Development assistance from OpenAI Codex. The original third-party licence texts
+are included in the application's Licenses resource folder.</p>
+<p>The <a href="https://huggingface.co/gradium/phonon-40m-multilingual">multilingual
+40M model</a> is licensed under
+<a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a>,
+which permits noncommercial sharing subject to its terms. This app is a free,
+independent accessibility project, not an official or endorsed Gradium product.</p>
+<p>The original checkpoint was converted to Core ML using Gradium's export tool;
+the model was not retrained. The runtime is MIT OR Apache 2.0, and Gradium's
+published voice catalogue and Sonic are Apache 2.0. Their original licence texts,
+source links and notices are included in the application's Licenses folder.</p>
+</html>

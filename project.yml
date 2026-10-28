@@ -1,0 +1,69 @@
+name: PhononMac
+options:
+  bundleIdPrefix: com.onj
+packages:
+  SpeechCore:
+    path: .
+settings:
+  base:
+    MACOSX_DEPLOYMENT_TARGET: "15.0"
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "3"
+    SWIFT_VERSION: "5.0"
+    ARCHS: arm64
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+targets:
+  PhononMac:
+    type: application
+    platform: macOS
+    sources:
+      - App
+      - Shared
+      - path: Resources/Models
+        type: folder
+        buildPhase: resources
+      - path: Resources/voices.json
+        buildPhase: resources
+      - path: Resources/Manual.html
+        buildPhase: resources
+      - path: Resources/Licenses
+        type: folder
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.onj.phononmac
+        PRODUCT_NAME: Phonon for Mac
+        INFOPLIST_FILE: App/Info.plist
+        CODE_SIGN_ENTITLEMENTS: App/PhononMac.entitlements
+    dependencies:
+      - package: SpeechCore
+        product: SpeechCore
+      - package: SpeechCore
+        product: UpdateCore
+      - target: PhononProvider
+        embed: true
+  PhononProvider:
+    type: app-extension
+    platform: macOS
+    sources:
+      - Provider
+      - Shared
+      - path: Resources/voices.json
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.onj.phononmac.speechprovider
+        PRODUCT_NAME: Phonon Speech Provider
+        INFOPLIST_FILE: Provider/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Provider/PhononProvider.entitlements
+        APPLICATION_EXTENSION_API_ONLY: YES
+        SKIP_INSTALL: YES
+    dependencies:
+      - package: SpeechCore
+        product: SpeechCore
+schemes:
+  PhononMac:
+    build:
+      targets:
+        PhononMac: all
+        PhononProvider: all
