@@ -37,7 +37,8 @@ import OSLog
             let models = try PhononModels.install(bundled: source, to: VoiceCatalog.modelDirectory())
             let engine = NativeEngine(models: models)
             let info = try await engine.ready()
-            guard Set(VoiceCatalog.all.map(\.name)).isSubset(of: Set(info.voices)), info.languages.count == 5 else {
+            guard VoiceCatalog.all.allSatisfy({ VoiceResources.resolve($0.name, available: info.voices) != nil }),
+                  info.languages.count == 5 else {
                 throw RequestError.modelUnavailable
             }
             ready = true

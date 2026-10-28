@@ -26,7 +26,10 @@ public actor NativeEngine {
             try Task.checkCancellation()
             let engine = try await loading.value
             try Task.checkCancellation()
-            if engine.voice != voice { try await engine.setVoice(voice) }
+            guard let selectedVoice = VoiceResources.resolve(voice, available: engine.voices) else {
+                throw PhononError(description: "The selected voice is not available in the prepared model.")
+            }
+            if engine.voice != selectedVoice { try await engine.setVoice(selectedVoice) }
             try Task.checkCancellation()
             let selected = Language(rawValue: language) ?? .none
             if engine.language != selected { try await engine.setLanguage(selected) }
