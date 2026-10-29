@@ -95,7 +95,7 @@ import OSLog
                 Text("Phonon for Mac \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "")").font(.headline)
                 Picker("Language", selection: $model.locale) {
                     ForEach(model.locales, id: \.self) { locale in
-                        Text(locale == "en" ? "English Character Voices" :
+                        Text(locale == "characters" || locale == "en" ? "English Character Voices" :
                             (Locale.current.localizedString(forIdentifier: locale) ?? locale)).tag(locale)
                     }
                 }.onChange(of: model.locale) { _, _ in model.changeLanguage() }

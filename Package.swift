@@ -11,8 +11,10 @@ let package = Package(
         .target(name: "SonicDSP", path: "Vendor/Sonic", publicHeadersPath: "include"),
         .target(name: "SpeechCore", dependencies: ["SonicDSP", .product(name: "ptts", package: "PhononTTS")]),
         .target(name: "UpdateCore"),
+        .target(name: "VoiceCatalog", path: "Shared"),
         .testTarget(name: "SpeechCoreTests", dependencies: ["SpeechCore"]),
         .testTarget(name: "UpdateCoreTests", dependencies: ["UpdateCore"]),
+        .testTarget(name: "VoiceCatalogTests", dependencies: ["VoiceCatalog"]),
     ],
     swiftLanguageModes: [.v5]
 )

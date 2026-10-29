@@ -5,10 +5,13 @@ struct VoiceDefinition: Codable, Identifiable, Hashable {
     let name: String
     let locale: String
     var id: String { "com.onj.phononmac.voice." + name.addingPercentEncoding(withAllowedCharacters: .alphanumerics)! }
-    var language: String { String(locale.prefix(2)) }
+    var isCharacterVoice: Bool { locale == "characters" || locale == "en" }
+    // The character group is catalogue metadata, not a language macOS can list.
+    var providerLocale: String { isCharacterVoice ? "en-US" : locale }
+    var language: String { String(providerLocale.prefix(2)) }
     var providerVoice: AVSpeechSynthesisProviderVoice {
         AVSpeechSynthesisProviderVoice(name: "Phonon \(name)", identifier: id,
-                                      primaryLanguages: [locale], supportedLanguages: [locale])
+                                      primaryLanguages: [providerLocale], supportedLanguages: [providerLocale])
     }
 }
 
