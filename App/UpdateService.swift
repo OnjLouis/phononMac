@@ -122,7 +122,10 @@ private final class DownloadLimit: UpdateRedirectPolicy, URLSessionDownloadDeleg
             throw UpdateFailure.invalid("There is not enough free space to stage this update safely.")
         }
         status = "Downloading version \(manifest.version)..."
-        let (download, response) = try await session.download(from: UpdatePolicy.packageURL, delegate: DownloadLimit(manifest.size))
+        guard let packageURL = URL(string: manifest.downloadUrl) else {
+            throw UpdateFailure.invalid("The signed download address is invalid.")
+        }
+        let (download, response) = try await session.download(from: packageURL, delegate: DownloadLimit(manifest.size))
         defer { try? FileManager.default.removeItem(at: download) }
         try validate(response)
         let root = FileManager.default.temporaryDirectory.appendingPathComponent("PhononMacUpdate-\(UUID().uuidString)")
