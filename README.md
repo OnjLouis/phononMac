@@ -10,11 +10,17 @@ no server, account or first-use model download is needed.
 ## Downloads
 
 - [Latest Mac release](https://github.com/OnjLouis/phononMac/releases/latest)
+- [Phonon for iPhone and iPad on the App Store](https://apps.apple.com/app/phonon/id6828988617)
 - [Report an issue](https://github.com/OnjLouis/phononMac/issues)
 - [Phonon for NVDA](https://github.com/OnjLouis/phononNVDA)
 - [Phonon SAPI for Windows](https://github.com/OnjLouis/phononSAPI)
 - [Software catalogue](https://onj.me/software), [contact](https://onj.me/contact)
   and [donate](https://onj.me/donate)
+
+The free iOS and iPadOS edition provides the same 102-voice catalogue for
+VoiceOver, with offline on-device speech. It requires iOS or iPadOS 18 or later.
+Open it once to prepare the voices, then choose them in VoiceOver's speech
+settings; the companion app does not need to stay open.
 
 Copy the app from the DMG into Applications, open it and wait for Ready.
 Choose a voice and use Test Voice. Add a Phonon voice in VoiceOver Utility and
