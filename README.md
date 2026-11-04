@@ -33,11 +33,10 @@ The app's Help button opens the complete manual.
 
 ## Updates
 
-Version 1.0.4 removes local build paths from the released executables.
-Version 1.0.3 moved downloads, source and signed updates to this repository.
-Existing installations can update through the original server without manually
-reinstalling. Speech, voices, identifiers, settings and prepared models are
-unchanged. Earlier release notes are in the included manual.
+Version 1.0.5 improves the phrasing of long sentences and updates the native
+Core ML engine. The 102 voices, their identifiers and saved settings are unchanged.
+Open the app once after updating and wait for Ready while it prepares the revised
+models. Earlier release notes are in the included manual.
 
 Choose Never, Hourly or Daily checking in the settings app, or check immediately.
 Checks run only while that app is open. Updates verify the Phonon signature,

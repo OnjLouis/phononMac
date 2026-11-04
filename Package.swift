@@ -12,7 +12,7 @@ let package = Package(
         .target(name: "SpeechCore", dependencies: ["SonicDSP", .product(name: "ptts", package: "PhononTTS")]),
         .target(name: "UpdateCore"),
         .target(name: "VoiceCatalog", path: "Shared"),
-        .testTarget(name: "SpeechCoreTests", dependencies: ["SpeechCore"]),
+        .testTarget(name: "SpeechCoreTests", dependencies: ["SpeechCore", .product(name: "ptts", package: "PhononTTS")]),
         .testTarget(name: "UpdateCoreTests", dependencies: ["UpdateCore"]),
         .testTarget(name: "VoiceCatalogTests", dependencies: ["VoiceCatalog"]),
     ],

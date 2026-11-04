@@ -53,10 +53,28 @@ public enum PhononModels {
             throw PhononError(description: "\(source.path) has no readable bundle.json")
         }
         if isInstalled(at: dir), manifest(at: dir)?.built == want.built { return dir }
-        try? fm.removeItem(at: dir)
-        try fm.createDirectory(at: dir.deletingLastPathComponent(), withIntermediateDirectories: true)
-        try fm.copyItem(at: source, to: dir)
-        try excludeFromBackup(dir)
+        let parent = dir.deletingLastPathComponent()
+        try fm.createDirectory(at: parent, withIntermediateDirectories: true)
+        let staging = parent.appendingPathComponent("\(dir.lastPathComponent).staging-\(UUID().uuidString)")
+        let backup = parent.appendingPathComponent("\(dir.lastPathComponent).previous-\(UUID().uuidString)")
+        defer { try? fm.removeItem(at: staging) }
+        try fm.copyItem(at: source, to: staging)
+        for file in want.files {
+            guard try matches(staging.appending(path: file.path), file) else {
+                throw PhononError(description: "\(file.path) does not match its size or SHA-256")
+            }
+        }
+        try excludeFromBackup(staging)
+        // Verify the complete replacement before moving any working model data.
+        let hadPrevious = fm.fileExists(atPath: dir.path)
+        if hadPrevious { try fm.moveItem(at: dir, to: backup) }
+        do {
+            try fm.moveItem(at: staging, to: dir)
+        } catch {
+            if hadPrevious { try fm.moveItem(at: backup, to: dir) }
+            throw error
+        }
+        if hadPrevious { try? fm.removeItem(at: backup) }
         return dir
     }
 

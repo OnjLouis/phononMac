@@ -1,5 +1,5 @@
 Phonon native runtime and dependency licence notices
-Runtime source: https://github.com/gradium-ai/xn-ptts/tree/e851445158f07061f063e3edff0080f9426c0da2
+Runtime source: https://github.com/gradium-ai/xn-ptts/tree/95bf24d1ca5e94f0f62abe588b1ccb6f093bcc9c
 
 ======================================================================
 ahash 0.8.12
@@ -12524,7 +12524,7 @@ limitations under the License.
 
 
 ======================================================================
-ptts 0.5.0
+ptts 0.6.0
 License: MIT OR Apache-2.0
 Source: https://github.com/gradium-ai/xn-ptts
 
@@ -12759,7 +12759,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ======================================================================
-ptts-coreml 0.5.0
+ptts-coreml 0.6.0
 License: MIT OR Apache-2.0
 Source: https://github.com/gradium-ai/xn-ptts
 
@@ -12994,7 +12994,7 @@ DEALINGS IN THE SOFTWARE.
 
 
 ======================================================================
-ptts-ffi 0.5.0
+ptts-ffi 0.6.0
 License: MIT OR Apache-2.0
 Source: https://github.com/gradium-ai/xn-ptts
 
@@ -21383,9 +21383,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 ======================================================================
-xn 0.2.11
+xn 0.2.13
 License: MIT/Apache-2.0
-Source: https://crates.io/crates/xn/0.2.11
+Source: https://crates.io/crates/xn/0.2.13
 
 --- LICENSE-APACHE ---
                                  Apache License
