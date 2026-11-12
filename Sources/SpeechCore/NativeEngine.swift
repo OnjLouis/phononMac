@@ -2,10 +2,12 @@ import Foundation
 import PhononTTS
 
 public actor NativeEngine {
-    private let loading: Task<Phonon, Error>
+    private let models: URL
+    private var loading: Task<Phonon, Error>
     private var tail: Task<Void, Never>?
 
     public init(models: URL) {
+        self.models = models
         loading = Task { try await Phonon.load(models: models, language: .english) }
     }
 
@@ -18,15 +20,25 @@ public actor NativeEngine {
                       onAudio: @escaping @Sendable ([Float]) -> Void) async throws -> SpeechStats {
         try Task.checkCancellation()
         let predecessor = tail
-        let loading = self.loading
         // Actors are reentrant at await points. Serialize the whole operation,
         // not just each native setter, so concurrent requests cannot swap voices.
         let operation = Task {
             await predecessor?.value
             try Task.checkCancellation()
-            let engine = try await loading.value
+            var engine = try await self.loading.value
             try Task.checkCancellation()
-            guard let selectedVoice = VoiceResources.resolve(voice, available: engine.voices) else {
+            var selectedVoice = VoiceResources.resolve(voice, available: engine.voices)
+            if selectedVoice == nil && voice.hasPrefix("imported-"),
+               FileManager.default.isReadableFile(atPath: self.models.appendingPathComponent("voices/" + voice + ".safetensors").path) {
+                let models = self.models
+                let reload = Task { try await Phonon.load(models: models, language: .english) }
+                engine = try await reload.value
+                self.loading = reload
+                selectedVoice = VoiceResources.resolve(voice, available: engine.voices)
+            }
+            try Task.checkCancellation()
+            guard let selectedVoice = selectedVoice ?? (voice.hasPrefix("imported-")
+                ? VoiceResources.resolve("Freya", available: engine.voices) : nil) else {
                 throw PhononError(description: "The selected voice is not available in the prepared model.")
             }
             if engine.voice != selectedVoice { try await engine.setVoice(selectedVoice) }

@@ -33,10 +33,10 @@ The app's Help button opens the complete manual.
 
 ## Updates
 
-Version 1.0.5 improves the phrasing of long sentences and updates the native
-Core ML engine. The 102 voices, their identifiers and saved settings are unchanged.
-Open the app once after updating and wait for Ready while it prepares the revised
-models. Earlier release notes are in the included manual.
+Version 1.0.6 adds **Manage Imported Voices** for compatible `.safetensors`
+files and preview examples in the selected language. The 102 built-in voices,
+their identifiers, and saved settings are unchanged. Earlier release notes are
+in the included manual.
 
 Choose Never, Hourly or Daily checking in the settings app, or check immediately.
 Checks run only while that app is open. Updates verify the Phonon signature,
@@ -72,6 +72,8 @@ and shared app-group entitlement for installation.
 Model assets are not duplicated in the source repository. Obtain the matching
 multilingual Core ML export using Gradium's export tools, or copy the Models
 resource directory from a release app into `Resources/Models` under its original
-licence. Preserve its `bundle.json` inventory and ASCII voice resource names.
+licence. Also copy `Projection.bin` from the same release app's resources into
+`Resources`; it contains the matching model's speaker projection for imported
+voices. Preserve the model inventory and ASCII voice resource names.
 Do not substitute another model checkpoint without rebuilding and testing its
 configuration. The provider generates audio locally and does not contact GitHub.

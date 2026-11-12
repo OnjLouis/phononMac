@@ -8,22 +8,37 @@ import OSLog
     @Published var status = "Preparing voices..."
     @Published var ready = false
     @Published var speaking = false
+    @Published private var imported = [VoiceDefinition]()
     @Published var locale = "en-GB"
     @Published var selectedName = "Freya"
-    @Published var text = "Hello. This is Phonon speaking on your Mac."
+    @Published private var preview = PreviewSample()
+    var text: String { preview.text }
+    var hasCustomPreview: Bool { preview.isCustom }
     private let synthesizer = AVSpeechSynthesizer()
     private var activeUtterance: AVSpeechUtterance?
     private let logger = Logger(subsystem: "com.onj.phononmac", category: "app")
-    var locales: [String] { Set(VoiceCatalog.all.map(\.locale)).sorted() }
-    var voices: [VoiceDefinition] { VoiceCatalog.all.filter { $0.locale == locale } }
+    var locales: [String] { Set((VoiceCatalog.all + imported).map(\.locale)).sorted() }
+    var voices: [VoiceDefinition] { (VoiceCatalog.all + imported).filter { $0.locale == locale } }
 
     override init() {
         super.init()
         synthesizer.delegate = self
         Task { await prepare() }
     }
+    static var projection: URL? { Bundle.main.url(forResource: "Projection", withExtension: "bin") }
+    func refreshImports() {
+        imported = VoiceCatalog.imported()
+        changeLanguage()
+        AVSpeechSynthesisProviderVoice.updateSpeechVoices()
+    }
     func changeLanguage() {
-        if !voices.contains(where: { $0.name == selectedName }) { selectedName = voices.first?.name ?? "" }
+        if !voices.contains(where: { $0.selection == selectedName }) { selectedName = voices.first?.selection ?? "" }
+        preview.follow(locale)
+    }
+    func editPreview(_ text: String) { preview.edit(text) }
+    func resetPreview() {
+        stop()
+        preview.reset(locale)
     }
     func refresh() {
         AVSpeechSynthesisProviderVoice.updateSpeechVoices()
@@ -41,7 +56,10 @@ import OSLog
                   info.languages.count == 5 else {
                 throw RequestError.modelUnavailable
             }
+            do { try VoiceCatalog.importStore().restoreRuntimeVoices() }
+            catch { logger.error("Could not restore an imported voice: \(error.localizedDescription, privacy: .public)") }
             ready = true
+            imported = VoiceCatalog.imported()
             AVSpeechSynthesisProviderVoice.updateSpeechVoices()
             status = "Ready: \(VoiceCatalog.all.count) voices, five languages."
             logger.info("Model preparation complete; 102 voices are ready")
@@ -52,7 +70,7 @@ import OSLog
     }
     func test() {
         stop()
-        guard let definition = voices.first(where: { $0.name == selectedName }),
+        guard let definition = voices.first(where: { $0.selection == selectedName }),
               let voice = AVSpeechSynthesisVoice.speechVoices().first(where: {
                   $0.identifier == definition.id || $0.identifier.hasSuffix(definition.id)
               }) else {
@@ -88,6 +106,7 @@ import OSLog
 @main struct PhononMacApp: App {
     @StateObject private var model = AppModel()
     @StateObject private var updater = UpdateService()
+    @State private var managing = false
     @AppStorage("updateFrequency") private var updateFrequency = "daily"
     var body: some Scene {
         WindowGroup("Phonon for Mac") {
@@ -100,18 +119,22 @@ import OSLog
                     }
                 }.onChange(of: model.locale) { _, _ in model.changeLanguage() }
                 Picker("Voice", selection: $model.selectedName) {
-                    ForEach(model.voices) { voice in Text(voice.name).tag(voice.name) }
+                    ForEach(model.voices) { voice in Text(voice.name).tag(voice.selection) }
                 }
-                TextField("Test text", text: $model.text, axis: .vertical).lineLimit(3...6)
+                TextField("Test text", text: Binding(get: { model.text }, set: model.editPreview), axis: .vertical)
+                    .lineLimit(3...6)
                 HStack {
                     Button("Test Voice") { model.test() }.disabled(!model.ready || model.text.isEmpty)
                     Button("Stop") { model.stop() }.disabled(!model.speaking)
+                    Button("Reset Sample") { model.resetPreview() }.disabled(!model.hasCustomPreview)
                     Button("Refresh Voices") { model.refresh() }.disabled(!model.ready)
                     Button("Open Manual") {
                         if let url = Bundle.main.url(forResource: "Manual", withExtension: "html") { NSWorkspace.shared.open(url) }
                     }
                 }
                 Text(model.status).textSelection(.enabled).accessibilityLabel("Status: \(model.status)")
+                Button("Manage Imported Voices") { managing = true }.disabled(!model.ready)
+                    .sheet(isPresented: $managing) { MacImportView(onChange: model.refreshImports) }
                 Divider()
                 Picker("Check for updates", selection: $updateFrequency) {
                     ForEach(UpdateFrequency.allCases) { value in Text(value.title).tag(value.rawValue) }

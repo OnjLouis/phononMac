@@ -27,7 +27,7 @@ public final class PhononSpeechAudioUnit: AVSpeechSynthesisProviderAudioUnit {
         get {
             guard let models = try? VoiceCatalog.modelDirectory(),
                   FileManager.default.isReadableFile(atPath: models.appendingPathComponent("bundle.json").path) else { return [] }
-            return VoiceCatalog.all.map(\.providerVoice)
+            return (VoiceCatalog.all + VoiceCatalog.imported()).map(\.providerVoice)
         }
         set {}
     }
@@ -64,9 +64,7 @@ public final class PhononSpeechAudioUnit: AVSpeechSynthesisProviderAudioUnit {
                 engine = model
             }
             let request = try SpeechRequest.parse(speech.ssmlRepresentation)
-            guard let voice = VoiceCatalog.all.first(where: {
-                speech.voice.identifier == $0.id || speech.voice.identifier.hasSuffix($0.id)
-            }) else { throw RequestError.modelUnavailable }
+            guard let voice = VoiceCatalog.resolve(speech.voice.identifier) else { throw RequestError.modelUnavailable }
             let logger = self.logger
             // Waiting for the cancelled predecessor keeps voice/language setters and
             // synthesis in one transaction; no stale task can change the new voice.
@@ -78,7 +76,7 @@ public final class PhononSpeechAudioUnit: AVSpeechSynthesisProviderAudioUnit {
                     try Task.checkCancellation()
                     if !request.text.isEmpty {
                         logger.debug("Request \(number) native start")
-                        _ = try await model.speak(request, voice: voice.name, language: voice.language) { samples in
+                        _ = try await model.speak(request, voice: voice.selection, language: voice.language) { samples in
                             _ = current.push(samples)
                         }
                         logger.debug("Request \(number) native finished")

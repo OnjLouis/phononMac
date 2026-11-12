@@ -1,7 +1,9 @@
 <!doctype html><html lang="en"><meta charset="utf-8"><title>Phonon for Mac</title>
-<h1>Phonon for Mac 1.0.5</h1>
+<h1>Phonon for Mac 1.0.6</h1>
 <p>Offline, multilingual speech for your Mac.</p>
 <h2>What's New</h2>
+<p>Version 1.0.6: import compatible Phonon voice files and preview voices with
+sample text in the selected language.</p>
 <p>Version 1.0.5: improves long-sentence phrasing with fewer artificial pauses,
 updates the native Core ML engine, and verifies replacement model data before
 replacing the previous copy. All 102 voices and saved voice selections remain
@@ -25,11 +27,20 @@ streaming rate, pitch and volume controls; voice preview and signed updates.</p>
 <p>Copy Phonon for Mac from the disk image into Applications, open it and wait
 for Ready. Choose a language and voice, then use
 Test Voice. Refresh Voices updates the system list; it may take a short time to appear.</p>
+<p>The preview sample follows the selected language. You can type your own
+text without losing it when you change languages. Reset Sample restores the
+example for the selected language.</p>
 <p>In VoiceOver Utility, add a Phonon voice to your speech voices and select it.
 Keep a familiar Apple voice available as an alternative. Closing this
 application does not disable the voices.</p>
 <p>The first system utterance can take several seconds while Core ML prepares
 the engine. Subsequent utterances stream without waiting for the whole text.</p>
+<h2>Imported Voices</h2>
+<p>Choose Manage Imported Voices, then Add Voice to open a compatible
+<code>.safetensors</code> file. Name the voice and choose its language. Phonon
+keeps a local copy and leaves your original file alone. Select an import and
+choose Remove Voice to delete the copy. VoiceOver Utility may retain a blank
+saved entry after removal; remove that entry in VoiceOver Utility if it remains.</p>
 <h2>Speech Controls</h2>
 <p>VoiceOver supplies rate, pitch and volume. Phonon generates streaming audio;
 Sonic adjusts rate and pitch during generation. Navigating cancels obsolete speech.</p>

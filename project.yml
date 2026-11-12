@@ -7,8 +7,8 @@ packages:
 settings:
   base:
     MACOSX_DEPLOYMENT_TARGET: "15.0"
-    MARKETING_VERSION: "1.0.5"
-    CURRENT_PROJECT_VERSION: "8"
+    MARKETING_VERSION: "1.0.6"
+    CURRENT_PROJECT_VERSION: "9"
     DEBUG_INFORMATION_FORMAT: dwarf-with-dsym
     DEPLOYMENT_POSTPROCESSING: YES
     STRIP_INSTALLED_PRODUCT: YES
@@ -24,6 +24,8 @@ targets:
     sources:
       - App
       - Shared
+      - path: Resources/Projection.bin
+        buildPhase: resources
       - path: Resources/Models
         type: folder
         buildPhase: resources
