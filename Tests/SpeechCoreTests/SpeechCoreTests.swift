@@ -27,8 +27,32 @@ final class SpeechCoreTests: XCTestCase {
         XCTAssertThrowsError(try SpeechRequest.parse("<speak>broken"))
     }
     func testNeutralProsody() throws {
-        let r = try SpeechRequest.parse("<speak><prosody rate='200%' pitch='50%' volume='100%'>Hi</prosody></speak>")
+        let r = try SpeechRequest.parse("<speak><prosody rate='100%' pitch='50%' volume='100%'>Hi</prosody></speak>")
         XCTAssertEqual(r.rate, 1); XCTAssertEqual(r.pitch, 1); XCTAssertEqual(r.volume, 1)
+    }
+    func testSpeechRateUsesPercentageOfNormalSpeed() throws {
+        let omitted = try SpeechRequest.parse("<speak>Hi</speak>")
+        XCTAssertEqual(omitted.rate, 1)
+        for (rate, expected): (String, Float) in [
+            ("75%", 0.75), ("110.5%", 1.105), ("200%", 2), ("250%", 2.5),
+            ("0.75", 0.75), ("10%", 0.5), ("450%", 3)
+        ] {
+            let request = try SpeechRequest.parse("<speak><prosody rate='\(rate)'>Hi</prosody></speak>")
+            XCTAssertEqual(request.rate, expected, accuracy: 0.001, rate)
+        }
+    }
+    func testParsedRateChangesRenderedDuration() throws {
+        let signal = tone
+        func frames(_ rate: String) throws -> Int {
+            let request = try SpeechRequest.parse("<speak><prosody rate='\(rate)'>Hi</prosody></speak>")
+            let dsp = try SpeechProcessor(rate: request.rate, pitch: request.pitch, volume: request.volume)
+            return dsp.process(signal).count + dsp.finish().count
+        }
+        let normal = try frames("100%")
+        XCTAssertEqual(normal, 24_000)
+        XCTAssertGreaterThan(try frames("110%"), normal * 8 / 10)
+        XCTAssertLessThan(try frames("110%"), normal)
+        XCTAssertLessThan(try frames("230%"), normal / 2)
     }
     func testPitchSemitonesAndMute() throws {
         let r = try SpeechRequest.parse("<speak><prosody pitch='+12st' volume='silent'>Hi</prosody></speak>")

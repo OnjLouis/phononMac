@@ -31,6 +31,10 @@ seconds while Core ML prepares the model; subsequent speech streams immediately.
 VoiceOver controls rate, pitch and volume. Navigating cancels obsolete speech.
 The app's Help button opens the complete manual.
 
+In 1.0.7, Phonon responds correctly to rate changes in macOS speech clients
+such as `say`. If VoiceOver sounds faster after updating, lower its rate to
+your preferred speed.
+
 ## Updates
 
 Version 1.0.6 adds **Manage Imported Voices** for compatible `.safetensors`

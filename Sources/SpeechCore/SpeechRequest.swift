@@ -34,7 +34,7 @@ private final class RequestParser: NSObject, XMLParserDelegate {
         if boundaries.contains(element.lowercased()) { boundary() }
         guard element.lowercased() == "prosody" else { return }
         if let value = attributes["rate"], let n = number(value) {
-            request.rate = max(0.5, min(3, n / (value.contains("%") ? 200 : 1)))
+            request.rate = max(0.5, min(3, n / (value.contains("%") ? 100 : 1)))
         }
         if let value = attributes["pitch"], let n = number(value) {
             request.pitch = max(0.5, min(2, value.contains("st") ? pow(2, n / 12) :
