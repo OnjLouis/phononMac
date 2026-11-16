@@ -9,11 +9,12 @@ import OSLog
     @Published var ready = false
     @Published var speaking = false
     @Published private var imported = [VoiceDefinition]()
-    @Published var locale = "en-GB"
-    @Published var selectedName = "Freya"
+    @Published private(set) var locale = "en-GB"
+    @Published private(set) var selectedName = "Freya"
     @Published private var preview = PreviewSample()
+    @Published private(set) var previewFieldID = 0
     var text: String { preview.text }
-    var hasCustomPreview: Bool { preview.isCustom }
+    var previewRevision: Int { preview.revision }
     private let synthesizer = AVSpeechSynthesizer()
     private var activeUtterance: AVSpeechUtterance?
     private let logger = Logger(subsystem: "com.onj.phononmac", category: "app")
@@ -23,19 +24,44 @@ import OSLog
     override init() {
         super.init()
         synthesizer.delegate = self
+        let defaults = UserDefaults.standard
+        let savedLocale = defaults.string(forKey: "previewLocale")
+        if savedLocale != nil {
+            imported = VoiceCatalog.imported()
+            if let savedLocale, locales.contains(savedLocale) { locale = savedLocale }
+        }
+        selectedName = defaults.string(forKey: "previewVoice") ?? selectedName
+        changeLanguage()
         Task { await prepare() }
     }
     static var projection: URL? { Bundle.main.url(forResource: "Projection", withExtension: "bin") }
     func refreshImports() {
         imported = VoiceCatalog.imported()
         changeLanguage()
+        saveSelection()
         AVSpeechSynthesisProviderVoice.updateSpeechVoices()
     }
-    func changeLanguage() {
+    func selectLanguage(_ next: String) {
+        guard next != locale else { return }
+        if !preview.isCustom { previewFieldID += 1 }
+        locale = next
+        changeLanguage()
+        saveSelection()
+    }
+    func selectVoice(_ voice: String) {
+        guard voice != selectedName, voices.contains(where: { $0.selection == voice }) else { return }
+        selectedName = voice
+        saveSelection()
+    }
+    private func saveSelection() {
+        UserDefaults.standard.set(locale, forKey: "previewLocale")
+        UserDefaults.standard.set(selectedName, forKey: "previewVoice")
+    }
+    private func changeLanguage() {
         if !voices.contains(where: { $0.selection == selectedName }) { selectedName = voices.first?.selection ?? "" }
         preview.follow(locale)
     }
-    func editPreview(_ text: String) { preview.edit(text) }
+    func editPreview(_ text: String, revision: Int) { preview.edit(text, revision: revision) }
     func resetPreview() {
         stop()
         preview.reset(locale)
@@ -107,26 +133,37 @@ import OSLog
     @StateObject private var model = AppModel()
     @StateObject private var updater = UpdateService()
     @State private var managing = false
+    @AppStorage("pauseLength", store: UserDefaults(suiteName: VoiceCatalog.group))
+    private var pauseLength = PauseLength.unchanged
     @AppStorage("updateFrequency") private var updateFrequency = "daily"
+    @AppStorage("playOnVoiceChange") private var playOnVoiceChange = false
     var body: some Scene {
         WindowGroup("Phonon for Mac") {
             Form {
                 Text("Phonon for Mac \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "")").font(.headline)
-                Picker("Language", selection: $model.locale) {
+                Picker("Language", selection: Binding(get: { model.locale }, set: model.selectLanguage)) {
                     ForEach(model.locales, id: \.self) { locale in
                         Text(locale == "characters" || locale == "en" ? "English Character Voices" :
                             (Locale.current.localizedString(forIdentifier: locale) ?? locale)).tag(locale)
                     }
-                }.onChange(of: model.locale) { _, _ in model.changeLanguage() }
-                Picker("Voice", selection: $model.selectedName) {
+                }
+                Picker("Voice", selection: Binding(get: { model.selectedName }, set: model.selectVoice)) {
                     ForEach(model.voices) { voice in Text(voice.name).tag(voice.selection) }
                 }
-                TextField("Test text", text: Binding(get: { model.text }, set: model.editPreview), axis: .vertical)
-                    .lineLimit(3...6)
+                .onChange(of: model.selectedName) { _, _ in
+                    if playOnVoiceChange && model.ready && !model.text.isEmpty { model.test() }
+                }
+                Toggle("Play when voice changes", isOn: $playOnVoiceChange)
+                Picker("Pause length", selection: $pauseLength) {
+                    ForEach(PauseLength.allCases) { Text($0.label).tag($0) }
+                }
+                previewField
                 HStack {
                     Button("Test Voice") { model.test() }.disabled(!model.ready || model.text.isEmpty)
+                        .keyboardShortcut("t", modifiers: .command)
                     Button("Stop") { model.stop() }.disabled(!model.speaking)
-                    Button("Reset Sample") { model.resetPreview() }.disabled(!model.hasCustomPreview)
+                    Button("Reset Sample") { model.resetPreview() }
+                        .keyboardShortcut("r", modifiers: .command)
                     Button("Refresh Voices") { model.refresh() }.disabled(!model.ready)
                     Button("Open Manual") {
                         if let url = Bundle.main.url(forResource: "Manual", withExtension: "html") { NSWorkspace.shared.open(url) }
@@ -141,8 +178,18 @@ import OSLog
                 }
                 Button("Check Now") { updater.check() }.disabled(updater.busy)
                 if !updater.status.isEmpty { Text(updater.status).textSelection(.enabled) }
+                Link("Uses Gradium Phonon", destination: URL(string: "https://gradium.ai/")!)
+                Link("Andre's software catalogue", destination: URL(string: "https://onj.me/software/")!)
             }.padding(20).frame(minWidth: 540, idealWidth: 600, minHeight: 340)
                 .task { updater.start() }
         }.windowResizability(.contentSize)
+    }
+    private var previewField: some View {
+        let revision = model.previewRevision
+        return TextField("Test text", text: Binding(get: { model.text }, set: {
+            model.editPreview($0, revision: revision)
+        }), axis: .vertical)
+        .lineLimit(3...6)
+        .id(model.previewFieldID)
     }
 }

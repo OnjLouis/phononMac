@@ -5,10 +5,12 @@ import SonicDSP
 public final class SpeechProcessor: @unchecked Sendable {
     private let stream: sonicStream
     private let muted: Bool
-    public init(rate: Float, pitch: Float, volume: Float) throws {
+    private var pauses: PauseFilter
+    public init(rate: Float, pitch: Float, volume: Float, pauseLength: PauseLength = .unchanged) throws {
         guard let stream = sonicCreateStream(24_000, 1) else { throw RequestError.modelUnavailable }
         self.stream = stream
         muted = volume == 0
+        pauses = PauseFilter(mode: pauseLength, volume: max(0, min(1, volume)))
         sonicSetSpeed(stream, max(0.5, min(3, rate)))
         sonicSetPitch(stream, max(0.5, min(2, pitch)))
         sonicSetVolume(stream, max(0, min(1, volume)))
@@ -17,11 +19,11 @@ public final class SpeechProcessor: @unchecked Sendable {
 
     public func process(_ samples: [Float]) -> [Float] {
         samples.withUnsafeBufferPointer { _ = sonicWriteFloatToStream(stream, $0.baseAddress, Int32($0.count)) }
-        return drain()
+        return pauses.process(drain())
     }
     public func finish() -> [Float] {
         sonicFlushStream(stream)
-        return drain()
+        return pauses.process(drain()) + pauses.finish()
     }
     private func drain() -> [Float] {
         let count = Int(sonicSamplesAvailable(stream))

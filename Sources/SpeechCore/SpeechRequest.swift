@@ -5,8 +5,15 @@ public struct SpeechRequest {
     public var rate: Float = 1
     public var pitch: Float = 1
     public var volume: Float = 1
+    public var pauseLength: PauseLength = .unchanged
 
     public init(text: String = "") { self.text = text }
+
+    public func withPauseLength(_ length: PauseLength) -> Self {
+        var copy = self
+        copy.pauseLength = length
+        return copy
+    }
 
     public static func parse(_ ssml: String) throws -> SpeechRequest {
         let delegate = RequestParser()

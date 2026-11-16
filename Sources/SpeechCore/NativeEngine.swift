@@ -46,7 +46,8 @@ public actor NativeEngine {
             let selected = Language(rawValue: language) ?? .none
             if engine.language != selected { try await engine.setLanguage(selected) }
             try Task.checkCancellation()
-            let processor = try SpeechProcessor(rate: request.rate, pitch: request.pitch, volume: request.volume)
+            let processor = try SpeechProcessor(rate: request.rate, pitch: request.pitch, volume: request.volume,
+                                                pauseLength: request.pauseLength)
             let stats = try await engine.speak(request.text) { samples in
                 onAudio(processor.process(samples))
             }

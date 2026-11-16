@@ -1,8 +1,10 @@
 struct PreviewSample {
     private(set) var text = Self.sample(for: "en-GB")
     private(set) var isCustom = false
+    private(set) var revision = 0
 
-    mutating func edit(_ text: String) {
+    mutating func edit(_ text: String, revision: Int) {
+        guard revision == self.revision, text != self.text else { return }
         self.text = text
         isCustom = true
     }
@@ -14,6 +16,7 @@ struct PreviewSample {
     mutating func reset(_ locale: String) {
         text = Self.sample(for: locale)
         isCustom = false
+        revision += 1
     }
 
     static func sample(for locale: String) -> String {
