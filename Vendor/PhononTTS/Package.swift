@@ -15,8 +15,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "PhononCore",
-            url: "https://github.com/OnjLouis/phononMac/releases/download/v1.0.5/PhononCore.xcframework.zip",
-            checksum: "8dbd8723ae41da9a7ae05579d8f6dc42b95fe322f2b55089d7fc7fef182f5349"
+            url: "https://github.com/OnjLouis/phononMac/releases/download/v1.0.9/PhononCore.xcframework.zip",
+            checksum: "f796c41924fedc4d034912410e169ed0f0b1b5b7061c808a0e5bcdfef5950e57"
         ),
         .target(
             name: "PhononTTS",

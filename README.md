@@ -1,5 +1,8 @@
 # Phonon for Mac
 
+Version 1.0.9 reads UK currency in English using pounds and pence, including
+"one penny."
+
 Offline, multilingual Phonon voices for VoiceOver and other macOS speech
 applications. Includes 102 voices in English, French, German, Spanish and
 Portuguese, with English character voices available in VoiceOver as well.

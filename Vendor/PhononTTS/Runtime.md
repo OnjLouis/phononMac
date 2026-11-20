@@ -9,8 +9,10 @@ corrections are included. No model checkpoint or voice tensors were retrained.
 
 - [Upstream source](https://github.com/gradium-ai/xn-ptts/tree/95bf24d1ca5e94f0f62abe588b1ccb6f093bcc9c)
 - Source tarball SHA256: `0c49b01bc003ee4d71d13d1b01de7d16ffd1bf2609646e55c7f2d58c5da9f266`
-- PR 326 patch SHA256: `bbfb91b866b84c0c11917b00cb5215159ac431f63cdbefd3095a7ee46ea9bbf2`
-- XCframework archive SHA256: `8dbd8723ae41da9a7ae05579d8f6dc42b95fe322f2b55089d7fc7fef182f5349`
+- PR 326 diff SHA256: `94709891e40ba8cd47a48dd73eea69910a844abcefb9d0ba1dc1254ccabadfa1`
+- Apply `ptts-english-sterling.patch` after PR 326 to correct UK currency in
+  English speech and include the preprocessing regression tests.
+- XCframework archive SHA256: `f796c41924fedc4d034912410e169ed0f0b1b5b7061c808a0e5bcdfef5950e57`
 
 The library contains arm64 macOS and iOS device slices, built with Rust 1.98.1
 from the locked dependency graph. Build `ptts-ffi` for
