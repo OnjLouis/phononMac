@@ -20,6 +20,13 @@ import OSLog
     private let logger = Logger(subsystem: "com.onj.phononmac", category: "app")
     var locales: [String] { Set((VoiceCatalog.all + imported).map(\.locale)).sorted() }
     var voices: [VoiceDefinition] { (VoiceCatalog.all + imported).filter { $0.locale == locale } }
+    var statusText: String {
+        guard ready else { return status }
+        let stock = VoiceCatalog.all
+        let languages = Set(stock.map(\.language)).count
+        let imports = imported.count == 1 ? "voice" : "voices"
+        return "\(status) \(stock.count) built-in voices in \(languages) languages. \(imported.count) imported \(imports)."
+    }
 
     override init() {
         super.init()
@@ -37,6 +44,10 @@ import OSLog
     static var projection: URL? { Bundle.main.url(forResource: "Projection", withExtension: "bin") }
     func refreshImports() {
         imported = VoiceCatalog.imported()
+        if let edited = imported.first(where: { $0.selection == selectedName }), locale != edited.locale {
+            locale = edited.locale
+            if !preview.isCustom { previewFieldID += 1 }
+        }
         changeLanguage()
         saveSelection()
         AVSpeechSynthesisProviderVoice.updateSpeechVoices()
@@ -87,7 +98,7 @@ import OSLog
             ready = true
             imported = VoiceCatalog.imported()
             AVSpeechSynthesisProviderVoice.updateSpeechVoices()
-            status = "Ready: \(VoiceCatalog.all.count) voices, five languages."
+            status = "Ready."
             logger.info("Model preparation complete; 102 voices are ready")
         } catch {
             status = "Voices could not be prepared: \(error.localizedDescription)"
@@ -169,7 +180,9 @@ import OSLog
                         if let url = Bundle.main.url(forResource: "Manual", withExtension: "html") { NSWorkspace.shared.open(url) }
                     }
                 }
-                Text(model.status).textSelection(.enabled).accessibilityLabel("Status: \(model.status)")
+                Text(model.statusText)
+                    .focusable()
+                    .accessibilityLabel("Status: \(model.statusText)")
                 Button("Manage Imported Voices") { managing = true }.disabled(!model.ready)
                     .sheet(isPresented: $managing) { MacImportView(onChange: model.refreshImports) }
                 Divider()
@@ -177,7 +190,7 @@ import OSLog
                     ForEach(UpdateFrequency.allCases) { value in Text(value.title).tag(value.rawValue) }
                 }
                 Button("Check Now") { updater.check() }.disabled(updater.busy)
-                if !updater.status.isEmpty { Text(updater.status).textSelection(.enabled) }
+                if !updater.status.isEmpty { Text(updater.status) }
                 Link("Uses Gradium Phonon", destination: URL(string: "https://gradium.ai/")!)
                 Link("Andre's software catalogue", destination: URL(string: "https://onj.me/software/")!)
             }.padding(20).frame(minWidth: 540, idealWidth: 600, minHeight: 340)

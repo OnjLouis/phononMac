@@ -3,6 +3,20 @@ import XCTest
 @testable import VoiceCatalog
 
 final class VoiceCatalogTests: XCTestCase {
+    func testSelectedFileSnapshotRejectsMissingAndOversizedFiles() throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: false)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let file = root.appendingPathComponent("test.safetensors")
+        XCTAssertThrowsError(try MacVoiceStore.snapshotSelectedFile(file))
+        let draft = Data(repeating: 42, count: 128 * 1024)
+        try draft.write(to: file)
+        let snapshot = try MacVoiceStore.snapshotSelectedFile(file)
+        try Data(repeating: 0, count: 4 * 1024 * 1024 + 1).write(to: file)
+        XCTAssertThrowsError(try MacVoiceStore.snapshotSelectedFile(file))
+        XCTAssertEqual(snapshot, draft)
+    }
+
     private var catalogue: [VoiceDefinition] {
         get throws {
             let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent()

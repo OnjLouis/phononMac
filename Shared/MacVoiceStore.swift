@@ -16,12 +16,13 @@ struct MacVoiceStore {
     }
 
     enum Failure: LocalizedError {
-        case unsupported, name, limit
+        case unsupported, name, limit, unavailable
         var errorDescription: String? {
             switch self {
             case .unsupported: return "Choose a compatible Phonon voice file."
             case .name: return "Enter a voice name and select its language."
             case .limit: return "Phonon can store up to 64 imported voices."
+            case .unavailable: return "Phonon could not read this file. If it is stored in the cloud, make it available offline and try again."
             }
         }
     }
@@ -63,11 +64,44 @@ struct MacVoiceStore {
     }
 
     func add(_ input: URL, name: String, locale: String, projection: URL?) throws -> Entry {
+        try add(Self.readSource(input), name: name, locale: locale, projection: projection)
+    }
+
+    static func readSource(_ input: URL) throws -> Data {
+        guard input.pathExtension.lowercased() == "safetensors" else { throw Failure.unsupported }
+        return try read(input, limit: maxBytes)
+    }
+
+    static func snapshotSelectedFile(_ url: URL) throws -> Data {
+        guard url.isFileURL else { throw Failure.unavailable }
+        let access = url.startAccessingSecurityScopedResource()
+        defer { if access { url.stopAccessingSecurityScopedResource() } }
+        var coordinationError: NSError?
+        var snapshot: Result<Data, Error>?
+        NSFileCoordinator().coordinate(readingItemAt: url, options: [], error: &coordinationError) { readable in
+            snapshot = Result { try readSource(readable) }
+        }
+        guard coordinationError == nil, let snapshot else { throw Failure.unavailable }
+        do { return try snapshot.get() }
+        catch is CocoaError { throw Failure.unavailable }
+    }
+
+    func data(for entry: Entry) throws -> Data { try Self.read(tensor(entry), limit: Self.maxBytes) }
+
+    func changeLanguage(_ entry: Entry, to locale: String) throws {
+        guard let current = self.entry(for: entry.stem), Self.locales.contains(locale) else { throw Failure.name }
+        if current.locale == locale { return }
+        let changed = Entry(key: current.key, name: current.name, locale: locale)
+        try JSONEncoder().encode(changed).write(to: root.appendingPathComponent(entry.stem + ".json"), options: .atomic)
+    }
+
+    func add(_ input: Data, name: String, locale: String, projection: URL?) throws -> Entry {
         let name = name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !name.isEmpty, name.count <= 80, !name.unicodeScalars.contains(where: CharacterSet.controlCharacters.contains),
               Self.locales.contains(locale) else { throw Failure.name }
         guard entries().count < 64 else { throw Failure.limit }
-        let data = try Self.project(Self.read(input, limit: Self.maxBytes), projection: projection)
+        guard input.count <= Self.maxBytes else { throw Failure.unsupported }
+        let data = try Self.project(input, projection: projection)
         let entry = Entry(key: UUID(), name: name, locale: locale)
         let manager = FileManager.default
         try manager.createDirectory(at: root, withIntermediateDirectories: true, attributes: [.posixPermissions: 0o700])
@@ -97,9 +131,12 @@ struct MacVoiceStore {
         guard values.isRegularFile == true, values.isSymbolicLink != true else { throw Failure.unsupported }
         let file = try FileHandle(forReadingFrom: url)
         defer { try? file.close() }
-        guard let data = try file.read(upToCount: limit + 1), !data.isEmpty, data.count <= limit else {
-            throw Failure.unsupported
+        var data = Data()
+        while let chunk = try file.read(upToCount: min(64 * 1024, limit + 1 - data.count)), !chunk.isEmpty {
+            data.append(chunk)
+            if data.count > limit { throw Failure.unsupported }
         }
+        guard !data.isEmpty else { throw Failure.unsupported }
         return data
     }
 
