@@ -146,6 +146,8 @@ import OSLog
     @State private var managing = false
     @AppStorage("pauseLength", store: UserDefaults(suiteName: VoiceCatalog.group))
     private var pauseLength = PauseLength.unchanged
+    @AppStorage(SpeechRequest.ignoreSystemPitchKey, store: UserDefaults(suiteName: VoiceCatalog.group))
+    private var ignoreSystemPitch = false
     @AppStorage("updateFrequency") private var updateFrequency = "daily"
     @AppStorage("playOnVoiceChange") private var playOnVoiceChange = false
     var body: some Scene {
@@ -158,38 +160,52 @@ import OSLog
                             (Locale.current.localizedString(forIdentifier: locale) ?? locale)).tag(locale)
                     }
                 }
+                .help("Filters the preview voices and sets the language of the sample.")
                 Picker("Voice", selection: Binding(get: { model.selectedName }, set: model.selectVoice)) {
                     ForEach(model.voices) { voice in Text(voice.name).tag(voice.selection) }
                 }
+                .help("Changes the preview voice, not your VoiceOver voice.")
                 .onChange(of: model.selectedName) { _, _ in
                     if playOnVoiceChange && model.ready && !model.text.isEmpty { model.test() }
                 }
                 Toggle("Play when voice changes", isOn: $playOnVoiceChange)
+                    .help("Reads the current test text when you select a voice.")
                 Picker("Pause length", selection: $pauseLength) {
                     ForEach(PauseLength.allCases) { Text($0.label).tag($0) }
                 }
+                .help("Adjusts gaps in Phonon speech, including in VoiceOver.")
+                Toggle("Ignore system pitch changes", isOn: $ignoreSystemPitch)
+                    .help("Keeps the voice's natural pitch without changing rate or volume.")
                 previewField
                 HStack {
                     Button("Test Voice") { model.test() }.disabled(!model.ready || model.text.isEmpty)
                         .keyboardShortcut("t", modifiers: .command)
+                        .help("Reads the test text with the selected preview voice.")
                     Button("Stop") { model.stop() }.disabled(!model.speaking)
+                        .help("Stops the preview without interrupting VoiceOver.")
                     Button("Reset Sample") { model.resetPreview() }
                         .keyboardShortcut("r", modifiers: .command)
+                        .help("Replaces your test text with the sample for the selected language.")
                     Button("Refresh Voices") { model.refresh() }.disabled(!model.ready)
+                        .help("Refreshes the voice list available to Phonon and VoiceOver.")
                     Button("Open Manual") {
                         if let url = Bundle.main.url(forResource: "Manual", withExtension: "html") { NSWorkspace.shared.open(url) }
                     }
+                    .help("Opens the Phonon manual in your browser.")
                 }
                 Text(model.statusText)
                     .focusable()
                     .accessibilityLabel("Status: \(model.statusText)")
                 Button("Manage Imported Voices") { managing = true }.disabled(!model.ready)
+                    .help("Opens the list for adding, editing, or removing imported voices.")
                     .sheet(isPresented: $managing) { MacImportView(onChange: model.refreshImports) }
                 Divider()
                 Picker("Check for updates", selection: $updateFrequency) {
                     ForEach(UpdateFrequency.allCases) { value in Text(value.title).tag(value.rawValue) }
                 }
+                .help("Sets how often Phonon automatically checks for updates.")
                 Button("Check Now") { updater.check() }.disabled(updater.busy)
+                    .help("Checks immediately and asks before installing an update.")
                 if !updater.status.isEmpty { Text(updater.status) }
                 Link("Uses Gradium Phonon", destination: URL(string: "https://gradium.ai/")!)
                 Link("Andre's software catalogue", destination: URL(string: "https://onj.me/software/")!)
@@ -204,5 +220,6 @@ import OSLog
         }), axis: .vertical)
         .lineLimit(3...6)
         .id(model.previewFieldID)
+        .help("Enter or paste text to hear it with the selected preview voice.")
     }
 }

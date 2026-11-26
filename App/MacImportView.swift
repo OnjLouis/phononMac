@@ -24,11 +24,15 @@ struct MacImportView: View {
                     Text("\(entry.name), \(languageName(entry.locale))").tag(entry.key)
                 }
             }.accessibilityLabel("Imported voices")
+                .help("Select a voice to change its language or remove it.")
             HStack {
                 Button("Add Voice", systemImage: "plus", action: pickVoice).disabled(picking)
+                    .help("Choose a compatible Phonon voice file in safetensors format.")
                 Button("Change Language") { changeLanguage() }.disabled(selected == nil)
+                    .help("Moves the selected voice to another language without reimporting it.")
                 Button("Remove Voice", systemImage: "minus", role: .destructive) { confirmingRemoval = true }
                     .disabled(selected == nil)
+                    .help("Asks before removing the voice from Phonon and VoiceOver.")
                 Spacer()
                 Button("Done") { dismiss() }.keyboardShortcut(.cancelAction)
             }
@@ -41,13 +45,18 @@ struct MacImportView: View {
             existing = nil
         }) {
             Form {
-                if existing == nil { TextField("Voice name", text: $name) }
+                if existing == nil {
+                    TextField("Voice name", text: $name)
+                        .help("This name appears in Phonon and in the VoiceOver voice list.")
+                }
                 Picker("Spoken language", selection: $locale) {
                     Text("Choose a language").tag("")
                     ForEach(MacVoiceStore.locales, id: \.self) { Text(languageName($0)).tag($0) }
                 }
+                .help("Sets which language lists this voice appears in.")
                 HStack {
                     Button("Preview Voice") { playPreview() }.disabled(preview.playing)
+                        .help("Reads a sample before you save. It uses English if no language is set.")
                     Button("Stop Preview") { preview.stop() }.disabled(!preview.playing)
                 }
                 if !preview.message.isEmpty { Text(preview.message) }
@@ -55,6 +64,8 @@ struct MacImportView: View {
                     Button("Cancel", role: .cancel) { editing = false }.keyboardShortcut(.cancelAction)
                     Button(existing == nil ? "Import" : "Save") { save() }
                         .keyboardShortcut(.defaultAction).disabled(locale.isEmpty)
+                        .help(existing == nil ? "Adds this voice to Phonon and VoiceOver."
+                                              : "Saves the new language for this voice.")
                 }
             }.padding().frame(minWidth: 360).onDisappear { preview.stop() }
         }

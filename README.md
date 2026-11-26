@@ -1,7 +1,7 @@
 # Phonon for Mac
 
-Version 1.0.9 reads UK currency in English using pounds and pence, including
-"one penny."
+Version 1.0.11 adds VoiceOver hints to the app and an option to keep Phonon
+voices at their natural pitch when VoiceOver requests a pitch change.
 
 Offline, multilingual Phonon voices for VoiceOver and other macOS speech
 applications. Includes 102 voices in English, French, German, Spanish and
@@ -32,6 +32,8 @@ settings app does not disable the voices. The first utterance may take several
 seconds while Core ML prepares the model; subsequent speech streams immediately.
 
 VoiceOver controls rate, pitch and volume. Navigating cancels obsolete speech.
+Turn on **Ignore system pitch changes** in the Phonon app to keep a voice at
+its natural pitch. Rate and volume still follow VoiceOver.
 The app's Help button opens the complete manual.
 
 In 1.0.7, Phonon responds correctly to rate changes in macOS speech clients

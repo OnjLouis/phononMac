@@ -1,6 +1,8 @@
 import Foundation
 
 public struct SpeechRequest {
+    public static let ignoreSystemPitchKey = "ignoreSystemPitch"
+
     public var text = ""
     public var rate: Float = 1
     public var pitch: Float = 1
@@ -12,6 +14,13 @@ public struct SpeechRequest {
     public func withPauseLength(_ length: PauseLength) -> Self {
         var copy = self
         copy.pauseLength = length
+        return copy
+    }
+
+    public func withSystemPitchPreference(_ defaults: UserDefaults?) -> Self {
+        guard defaults?.bool(forKey: Self.ignoreSystemPitchKey) == true else { return self }
+        var copy = self
+        copy.pitch = 1
         return copy
     }
 

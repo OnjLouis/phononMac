@@ -65,6 +65,7 @@ public final class PhononSpeechAudioUnit: AVSpeechSynthesisProviderAudioUnit {
             }
             let request = try SpeechRequest.parse(speech.ssmlRepresentation)
                 .withPauseLength(.stored(in: VoiceCatalog.group))
+                .withSystemPitchPreference(UserDefaults(suiteName: VoiceCatalog.group))
             guard let voice = VoiceCatalog.resolve(speech.voice.identifier) else { throw RequestError.modelUnavailable }
             let logger = self.logger
             // Waiting for the cancelled predecessor keeps voice/language setters and
